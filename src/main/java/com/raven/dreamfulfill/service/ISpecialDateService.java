@@ -41,4 +41,9 @@ public interface ISpecialDateService {
     void deleteSpecialDate(Long id);
 
 
+    /**
+     * 生成指定年份的法定节日
+     * @param year
+     */
+    void insertSpecialDateByYear(int year);
 }

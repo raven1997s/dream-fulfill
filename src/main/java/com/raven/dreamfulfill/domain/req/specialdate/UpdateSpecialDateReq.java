@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
  * Description:
@@ -30,5 +31,9 @@ public class UpdateSpecialDateReq extends IdReq {
     @NotNull
     @ApiModelProperty(value = "节日类型，传统节日、纪念日等等")
     private Integer holidayType;
+
+    @NotNull
+    @ApiModelProperty(value = "节日所在日期")
+    private LocalDateTime holidayTime;
 
 }

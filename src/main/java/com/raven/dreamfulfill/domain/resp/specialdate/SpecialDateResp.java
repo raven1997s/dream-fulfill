@@ -37,6 +37,9 @@ public class SpecialDateResp extends AbstractBean {
     @ApiModelProperty(value = "节日添加人")
     private String createUserName;
 
+    @ApiModelProperty(value = "节日所在日期")
+    private LocalDateTime holidayTime;
+
     @ApiModelProperty(value = "创建日期")
     private LocalDateTime createTime;
 

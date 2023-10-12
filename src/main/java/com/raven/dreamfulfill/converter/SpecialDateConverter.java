@@ -1,5 +1,6 @@
 package com.raven.dreamfulfill.converter;
 
+import com.raven.dreamfulfill.domain.dto.HolidayDTO;
 import com.raven.dreamfulfill.domain.entity.SpecialDate;
 import com.raven.dreamfulfill.domain.req.specialdate.AddSpecialDateReq;
 import com.raven.dreamfulfill.domain.req.specialdate.UpdateSpecialDateReq;
@@ -26,4 +27,9 @@ public interface SpecialDateConverter {
     SpecialDate specialDateUpdateReqToSpecialDateEntity(UpdateSpecialDateReq req);
 
     SpecialDateResp specialDateEntityToSpecialDateResp(SpecialDate specialDate);
+
+    // todo
+    @Mapping(target = "createTime", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "updateTime", expression = "java(java.time.LocalDateTime.now())")
+    SpecialDate convertHolidayDTOToSpecialDate(HolidayDTO holidayDTO);
 }

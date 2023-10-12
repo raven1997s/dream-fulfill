@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
  * Description:
@@ -34,4 +35,8 @@ public class AddSpecialDateReq extends AbstractBean {
     @NotNull
     @ApiModelProperty(value = "节日添加人")
     private Long createId;
+
+    @NotNull
+    @ApiModelProperty(value = "节日所在日期")
+    private LocalDateTime holidayTime;
 }

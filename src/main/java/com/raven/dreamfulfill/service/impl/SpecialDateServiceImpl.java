@@ -3,7 +3,10 @@ package com.raven.dreamfulfill.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.raven.dreamfulfill.common.base.PageResult;
+import com.raven.dreamfulfill.common.exception.CommonException;
+import com.raven.dreamfulfill.common.utils.HolidayUtils;
 import com.raven.dreamfulfill.converter.SpecialDateConverter;
+import com.raven.dreamfulfill.domain.dto.HolidayDTO;
 import com.raven.dreamfulfill.domain.entity.SpecialDate;
 import com.raven.dreamfulfill.domain.entity.User;
 import com.raven.dreamfulfill.domain.enums.IsYesEnum;
@@ -11,7 +14,6 @@ import com.raven.dreamfulfill.domain.req.specialdate.AddSpecialDateReq;
 import com.raven.dreamfulfill.domain.req.specialdate.PageQuerySpecialDateListReq;
 import com.raven.dreamfulfill.domain.req.specialdate.UpdateSpecialDateReq;
 import com.raven.dreamfulfill.domain.resp.specialdate.SpecialDateResp;
-import com.raven.dreamfulfill.common.exception.CommonException;
 import com.raven.dreamfulfill.mapper.SpecialDateMapper;
 import com.raven.dreamfulfill.mapper.UserMapper;
 import com.raven.dreamfulfill.service.ISpecialDateService;
@@ -22,9 +24,10 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.weekend.WeekendSqls;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -71,6 +74,14 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
             throw new CommonException("节日名称已存在~");
         }
 
+        int timeClashCount = specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
+                .where(WeekendSqls.<SpecialDate>custom()
+                        .andBetween(SpecialDate::getHolidayTime, req.getHolidayTime().with(LocalTime.MIN), req.getHolidayTime().with(LocalTime.MAX)))
+                .build());
+        if (timeClashCount > 0) {
+            throw new CommonException("这一天已经有节日啦~");
+        }
+
         SpecialDate specialDate = specialDateConverter.specialDateAddReqToSpecialDateEntity(req);
 
         specialDateMapper.insertSelective(specialDate);
@@ -87,6 +98,14 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
             throw new CommonException("节日名称已存在~");
         }
 
+        int timeClashCount = specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
+                .where(WeekendSqls.<SpecialDate>custom()
+                        .andBetween(SpecialDate::getHolidayTime, req.getHolidayTime().with(LocalTime.MIN), req.getHolidayTime().with(LocalTime.MAX)))
+                .build());
+        if (timeClashCount > 0) {
+            throw new CommonException("这一天已经有节日啦~");
+        }
+
         SpecialDate specialDate = specialDateConverter.specialDateUpdateReqToSpecialDateEntity(req);
         specialDateMapper.updateByPrimaryKey(specialDate);
     }
@@ -100,6 +119,30 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
 
         specialDate.setIsDelete(IsYesEnum.YES.getVal());
         specialDateMapper.updateByPrimaryKey(specialDate);
+    }
+
+    @Override
+    public void insertSpecialDateByYear(int year) {
+
+        List<HolidayDTO> holidayList = HolidayUtils.getHolidayOfYear(String.valueOf(year)).toJavaList(HolidayDTO.class);
+
+        // 使用Stream分组并取最小日期
+        List<HolidayDTO> holidayDTOList = new ArrayList<>(holidayList.stream()
+                .collect(Collectors.toMap(HolidayDTO::getName, Function.identity(), BinaryOperator.minBy(Comparator.comparing(HolidayDTO::getDate))))
+                .values());
+
+        List<SpecialDate> specialDateList = this.convertHolidayDTOListToSpecialDateList(holidayDTOList);
+        specialDateMapper.insertList(specialDateList);
+    }
+
+    private List<SpecialDate> convertHolidayDTOListToSpecialDateList(List<HolidayDTO> holidayDTOList) {
+        return holidayDTOList.stream().map(holidayDTO -> specialDateConverter.convertHolidayDTOToSpecialDate(holidayDTO)).filter(specialDate -> {
+            int timeClashCount = specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
+                    .where(WeekendSqls.<SpecialDate>custom()
+                            .andBetween(SpecialDate::getHolidayTime, specialDate.getHolidayTime().with(LocalTime.MIN), specialDate.getHolidayTime().with(LocalTime.MAX)))
+                    .build());
+            return timeClashCount <= 0;
+        }).collect(Collectors.toList());
     }
 
     private List<SpecialDateResp> convertSpecialDateListToSpecialDateRespList(List<SpecialDate> specialDateList) {

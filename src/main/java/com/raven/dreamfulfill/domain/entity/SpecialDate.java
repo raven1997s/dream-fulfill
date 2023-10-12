@@ -33,8 +33,13 @@ public class SpecialDate {
 	@ApiModelProperty(value = "节日添加人")
 	private Long createId;
 
+	@Column(name = "is_delete")
 	@ApiModelProperty(value = "是否删除")
 	private Integer isDelete;
+
+	@Column(name = "holiday_time")
+	@ApiModelProperty(value = "节日所在日期")
+	private LocalDateTime holidayTime;
 
 	@Column(name = "create_time")
 	@ApiModelProperty(value = "创建日期")
