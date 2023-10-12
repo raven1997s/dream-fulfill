@@ -4,9 +4,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.raven.dreamfulfill.common.base.PageResult;
 import com.raven.dreamfulfill.converter.ActivityStatConverter;
+import com.raven.dreamfulfill.domain.dto.activity.stat.InsertActivityStatDTO;
 import com.raven.dreamfulfill.domain.entity.*;
 import com.raven.dreamfulfill.domain.enums.IsDelEnum;
-import com.raven.dreamfulfill.domain.req.activity.stat.AddActivityStatReq;
 import com.raven.dreamfulfill.domain.req.activity.stat.CurrentActivityStatReq;
 import com.raven.dreamfulfill.domain.req.activity.stat.PageQueryActivityStatListReq;
 import com.raven.dreamfulfill.domain.resp.activity.stat.ActivityStatResp;
@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ActivityStatServiceImpl implements IActivityStatService {
-
 
     @Autowired
     private ActivityStatMapper activityStatMapper;
@@ -63,11 +62,6 @@ public class ActivityStatServiceImpl implements IActivityStatService {
     }
 
     @Override
-    public void addActivityStat(AddActivityStatReq req) {
-
-    }
-
-    @Override
     public List<ActivityStatResp> findCurrentActivityStatList(CurrentActivityStatReq req) {
 
         List<ActivityStat> activityStats = activityStatMapper.selectByExample(Example.builder(SpecialDate.class)
@@ -81,6 +75,18 @@ public class ActivityStatServiceImpl implements IActivityStatService {
 
         return this.convertActivityStatListToActivityStatRespList(activityStats);
     }
+
+    @Override
+    public void insertActivityStatData(InsertActivityStatDTO dto) {
+        // 获取每个用户礼物 礼物按照心动值高低排序 筛选出前5个，如果不够5个，剩余的用下次再买填充
+
+        // 计算每个用户礼物的中奖概率
+
+        // 生成本次活动的礼物数据
+
+    }
+
+
 
 
     private List<ActivityStatResp> convertActivityStatListToActivityStatRespList(List<ActivityStat> activityStatList) {

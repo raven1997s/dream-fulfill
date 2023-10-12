@@ -1,6 +1,6 @@
 package com.raven.dreamfulfill.domain.enums;
 
-import com.raven.dreamfulfill.exception.CommonException;
+import com.raven.dreamfulfill.common.exception.CommonException;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 

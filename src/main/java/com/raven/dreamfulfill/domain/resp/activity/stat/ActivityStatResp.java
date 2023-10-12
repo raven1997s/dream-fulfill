@@ -31,6 +31,18 @@ public class ActivityStatResp extends AbstractBean {
     @ApiModelProperty(value = "用户名称")
     private String userName;
 
+    @ApiModelProperty(value = "活动id")
+    private Long activityId;
+
+    @ApiModelProperty(value = "礼物id")
+    private Long giftId;
+
+    @ApiModelProperty(value = "节日id")
+    private Long holidayId;
+
+    @ApiModelProperty(value = "用户id")
+    private Long userId;
+
     @ApiModelProperty(value = "本期中奖概率")
     private Integer winRate;
 

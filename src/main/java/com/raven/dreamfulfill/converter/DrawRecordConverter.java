@@ -19,11 +19,9 @@ import org.springframework.stereotype.Component;
 public interface DrawRecordConverter {
 
     @Mapping(target = "createTime", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "updateTime", expression = "java(java.time.LocalDateTime.now())")
     DrawRecord drawRecordAddReqToDrawRecordEntity(AddDrawRecordReq req);
 
     @Mapping(target = "createTime", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "updateTime", expression = "java(java.time.LocalDateTime.now())")
     DrawRecord drawRecordUpdateReqToDrawRecordEntity(UpdateDrawRecordReq req);
 
     DrawRecordResp drawRecordEntityToDrawRecordResp(DrawRecord drawRecord);

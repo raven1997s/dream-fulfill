@@ -19,11 +19,9 @@ import org.springframework.stereotype.Component;
 public interface ActivityStatConverter {
 
     @Mapping(target = "createTime", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "updateTime", expression = "java(java.time.LocalDateTime.now())")
     ActivityStat activityStatAddReqToActivityStatEntity(AddActivityStatReq req);
 
     @Mapping(target = "createTime", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping(target = "updateTime", expression = "java(java.time.LocalDateTime.now())")
     ActivityStat activityStatUpdateReqToActivityStatEntity(UpdateActivityStatReq req);
 
     ActivityStatResp activityStatEntityToActivityStatResp(ActivityStat activityStat);

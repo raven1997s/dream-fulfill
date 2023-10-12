@@ -1,4 +1,4 @@
-package com.raven.dreamfulfill.utils;
+package com.raven.dreamfulfill.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

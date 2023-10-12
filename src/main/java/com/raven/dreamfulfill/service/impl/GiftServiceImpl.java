@@ -11,7 +11,7 @@ import com.raven.dreamfulfill.domain.req.gift.AddGiftReq;
 import com.raven.dreamfulfill.domain.req.gift.PageQueryGiftListReq;
 import com.raven.dreamfulfill.domain.req.gift.UpdateGiftReq;
 import com.raven.dreamfulfill.domain.resp.gift.GiftResp;
-import com.raven.dreamfulfill.exception.CommonException;
+import com.raven.dreamfulfill.common.exception.CommonException;
 import com.raven.dreamfulfill.mapper.GiftMapper;
 import com.raven.dreamfulfill.mapper.UserMapper;
 import com.raven.dreamfulfill.service.IGiftService;

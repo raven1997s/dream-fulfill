@@ -1,4 +1,4 @@
-package com.raven.dreamfulfill.utils;
+package com.raven.dreamfulfill.common.utils;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

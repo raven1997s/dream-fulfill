@@ -2,7 +2,7 @@ package com.raven.dreamfulfill.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.raven.dreamfulfill.exception.CommonException;
+import com.raven.dreamfulfill.common.exception.CommonException;
 import com.raven.dreamfulfill.common.base.PageResult;
 import com.raven.dreamfulfill.converter.UserConverter;
 import com.raven.dreamfulfill.domain.entity.User;

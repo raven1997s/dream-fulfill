@@ -1,4 +1,4 @@
-package com.raven.dreamfulfill.exception;
+package com.raven.dreamfulfill.common.exception;
 
 import com.raven.dreamfulfill.common.base.CommonResult;
 

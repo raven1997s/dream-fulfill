@@ -1,6 +1,6 @@
 package com.raven.dreamfulfill.domain.req.activity;
 
-import com.raven.dreamfulfill.common.base.AbstractBean;
+import com.raven.dreamfulfill.common.base.PageQueryBaseReq;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,5 +12,5 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PageQueryActivityListReq extends AbstractBean {
+public class PageQueryActivityListReq extends PageQueryBaseReq {
 }

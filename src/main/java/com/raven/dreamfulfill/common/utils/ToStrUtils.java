@@ -1,4 +1,4 @@
-package com.raven.dreamfulfill.utils;
+package com.raven.dreamfulfill.common.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

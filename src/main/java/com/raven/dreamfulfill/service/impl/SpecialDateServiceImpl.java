@@ -11,7 +11,7 @@ import com.raven.dreamfulfill.domain.req.specialdate.AddSpecialDateReq;
 import com.raven.dreamfulfill.domain.req.specialdate.PageQuerySpecialDateListReq;
 import com.raven.dreamfulfill.domain.req.specialdate.UpdateSpecialDateReq;
 import com.raven.dreamfulfill.domain.resp.specialdate.SpecialDateResp;
-import com.raven.dreamfulfill.exception.CommonException;
+import com.raven.dreamfulfill.common.exception.CommonException;
 import com.raven.dreamfulfill.mapper.SpecialDateMapper;
 import com.raven.dreamfulfill.mapper.UserMapper;
 import com.raven.dreamfulfill.service.ISpecialDateService;
