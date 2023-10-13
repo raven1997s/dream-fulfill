@@ -1,11 +1,14 @@
 package com.raven.dreamfulfill.domain.enums;
 
+import lombok.Getter;
+
 /**
  * Description:
  * date: 2023/10/10 16:53
  *
  * @author raven
  */
+@Getter
 public enum SpecialDateTypeEnum {
 
     TRADITIONAL("传统节日",1),

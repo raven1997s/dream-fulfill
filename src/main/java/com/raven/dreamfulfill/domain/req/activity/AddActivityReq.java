@@ -2,8 +2,7 @@ package com.raven.dreamfulfill.domain.req.activity;
 
 import com.raven.dreamfulfill.common.base.AbstractBean;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -18,6 +17,9 @@ import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddActivityReq extends AbstractBean {
 
     @NotBlank

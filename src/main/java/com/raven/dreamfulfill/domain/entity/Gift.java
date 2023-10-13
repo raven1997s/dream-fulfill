@@ -1,12 +1,12 @@
 package com.raven.dreamfulfill.domain.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import javax.persistence.*;
-
-import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @ApiModel
@@ -31,8 +31,12 @@ public class Gift{
 	private BigDecimal price;
 
 	@Column(name = "infatuation_score")
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "心动值")
 	private BigDecimal infatuationScore;
+
+	@Column(name = "practicality_value")
+	@ApiModelProperty(value = "实用性")
+	private BigDecimal practicalityValue;
 
 	@Column(name = "description")
 	@ApiModelProperty(value = "添加原因")

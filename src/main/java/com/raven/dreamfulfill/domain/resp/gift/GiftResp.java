@@ -5,10 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -34,6 +30,9 @@ public class GiftResp extends AbstractBean {
 
     @ApiModelProperty(value = "心动值")
     private BigDecimal infatuationScore;
+
+    @ApiModelProperty(value = "实用性")
+    private BigDecimal practicalityValue;
 
     @ApiModelProperty(value = "添加原因")
     private String description;

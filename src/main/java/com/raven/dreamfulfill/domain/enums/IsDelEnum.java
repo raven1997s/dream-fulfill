@@ -12,11 +12,11 @@ public enum IsDelEnum {
     NO("未删除", 0);
 
     private String name;
-    private Integer val;
+    private Integer code;
 
-    IsDelEnum(String name, Integer val) {
+    IsDelEnum(String name, Integer code) {
         this.name = name;
-        this.val = val;
+        this.code = code;
     }
 
 }

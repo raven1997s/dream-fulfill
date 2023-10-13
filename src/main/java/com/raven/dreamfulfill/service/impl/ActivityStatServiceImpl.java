@@ -7,6 +7,7 @@ import com.raven.dreamfulfill.converter.ActivityStatConverter;
 import com.raven.dreamfulfill.domain.dto.activity.stat.InsertActivityStatDTO;
 import com.raven.dreamfulfill.domain.entity.*;
 import com.raven.dreamfulfill.domain.enums.IsDelEnum;
+import com.raven.dreamfulfill.domain.enums.IsYesEnum;
 import com.raven.dreamfulfill.domain.req.activity.stat.CurrentActivityStatReq;
 import com.raven.dreamfulfill.domain.req.activity.stat.PageQueryActivityStatListReq;
 import com.raven.dreamfulfill.domain.resp.activity.stat.ActivityStatResp;
@@ -78,16 +79,39 @@ public class ActivityStatServiceImpl implements IActivityStatService {
 
     @Override
     public void insertActivityStatData(InsertActivityStatDTO dto) {
-        // 获取每个用户礼物 礼物按照心动值高低排序 筛选出前5个，如果不够5个，剩余的用下次再买填充
+        // 获取每个用户礼物 礼物按照心动值高低排序 筛选出前6个，如果不够6个，就不能抽
+        List<Gift> allGiftList = giftMapper.selectByExample(Example.builder(Gift.class)
+                .where(WeekendSqls.<Gift>custom()
+                        .andEqualTo(Gift::getIsBuy, IsYesEnum.YES.getCode())
+                        .andNotEqualTo(Gift::getIsDelete, IsDelEnum.NO.getCode()))
+                .orderByDesc("infatuationScore")
+                .build());
+
+        allGiftList.stream()
+                // 按照用户分组
+                .collect(Collectors.groupingBy(Gift::getCreateId))
+                .entrySet().stream()
+                // 有效礼物太少，不生成抽奖活动信息
+                .filter(entry -> entry.getValue().size() > 6)
+                // 筛选出心动值排名靠前的五个礼物
+                .peek(entry -> entry.setValue(entry.getValue().subList(0, 6)))
+                .forEach(entry -> {
+                    Long userId = entry.getKey();
+                    List<Gift> userGiftList = entry.getValue();
+
+
+                });
+
 
         // 计算每个用户礼物的中奖概率
+        /**
+         * 中奖概率基于心动值因子  实用性因子 (金额大小和节日重要程度)因子  历史参加活动次数因子
+         *
+         */
 
-        // 生成本次活动的礼物数据
+        // 生成本次活动的每个用户的礼物记录统计数据
 
     }
-
-
-
 
     private List<ActivityStatResp> convertActivityStatListToActivityStatRespList(List<ActivityStat> activityStatList) {
         List<User> userList = userMapper.selectAll();
@@ -95,19 +119,19 @@ public class ActivityStatServiceImpl implements IActivityStatService {
 
         List<Activity> activities = activityMapper.selectByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsDelEnum.NO.getVal()))
+                        .andNotEqualTo(Activity::getIsDelete, IsDelEnum.NO.getCode()))
                 .build());
         Map<Long, Activity> activityMap = activities.stream().collect(Collectors.toMap(Activity::getId, activity -> activity));
 
         List<Gift> giftList = giftMapper.selectByExample(Example.builder(Gift.class)
                 .where(WeekendSqls.<Gift>custom()
-                        .andNotEqualTo(Gift::getIsDelete, IsDelEnum.NO.getVal()))
+                        .andNotEqualTo(Gift::getIsDelete, IsDelEnum.NO.getCode()))
                 .build());
         Map<Long, Gift> giftMap = giftList.stream().collect(Collectors.toMap(Gift::getId, gift -> gift));
 
         List<SpecialDate> specialDateList = specialDateMapper.selectByExample(Example.builder(SpecialDate.class)
                 .where(WeekendSqls.<SpecialDate>custom()
-                        .andNotEqualTo(SpecialDate::getIsDelete, IsDelEnum.NO.getVal()))
+                        .andNotEqualTo(SpecialDate::getIsDelete, IsDelEnum.NO.getCode()))
                 .build());
         Map<Long, SpecialDate> specialDateMap = specialDateList.stream().collect(Collectors.toMap(SpecialDate::getId, specialDate -> specialDate));
 

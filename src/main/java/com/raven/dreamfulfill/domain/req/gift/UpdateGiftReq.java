@@ -1,6 +1,5 @@
 package com.raven.dreamfulfill.domain.req.gift;
 
-import com.raven.dreamfulfill.common.base.AbstractBean;
 import com.raven.dreamfulfill.common.base.IdReq;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -44,6 +43,12 @@ public class UpdateGiftReq extends IdReq {
     @DecimalMax("100")
     @NotNull
     private BigDecimal infatuationScore;
+
+    @ApiModelProperty(value = "实用性")
+    @DecimalMin("0")
+    @DecimalMax("100")
+    @NotNull
+    private BigDecimal practicalityValue;
 
     @ApiModelProperty(value = "添加原因")
     @NotBlank

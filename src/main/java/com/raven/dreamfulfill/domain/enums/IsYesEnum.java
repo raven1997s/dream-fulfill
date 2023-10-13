@@ -2,8 +2,6 @@ package com.raven.dreamfulfill.domain.enums;
 
 import lombok.Getter;
 
-/**
- */
 @Getter
 public enum IsYesEnum {
 
@@ -11,11 +9,11 @@ public enum IsYesEnum {
     NO("否", 0);
 
     private String name;
-    private Integer val;
+    private Integer code;
 
-    IsYesEnum(String name, Integer val) {
+    IsYesEnum(String name, Integer code) {
         this.name = name;
-        this.val = val;
+        this.code = code;
     }
 
 }

@@ -6,10 +6,7 @@ import com.raven.dreamfulfill.common.base.PageResult;
 import com.raven.dreamfulfill.common.exception.CommonException;
 import com.raven.dreamfulfill.common.utils.LotteryDraw;
 import com.raven.dreamfulfill.converter.ActivityConverter;
-import com.raven.dreamfulfill.domain.entity.Activity;
-import com.raven.dreamfulfill.domain.entity.DrawRecord;
-import com.raven.dreamfulfill.domain.entity.SpecialDate;
-import com.raven.dreamfulfill.domain.entity.User;
+import com.raven.dreamfulfill.domain.entity.*;
 import com.raven.dreamfulfill.domain.enums.IsDelEnum;
 import com.raven.dreamfulfill.domain.enums.IsYesEnum;
 import com.raven.dreamfulfill.domain.req.activity.AddActivityReq;
@@ -19,16 +16,14 @@ import com.raven.dreamfulfill.domain.req.activity.stat.CurrentActivityStatReq;
 import com.raven.dreamfulfill.domain.req.drawrecord.DoLotteryReq;
 import com.raven.dreamfulfill.domain.resp.activity.ActivityResp;
 import com.raven.dreamfulfill.domain.resp.activity.stat.ActivityStatResp;
-import com.raven.dreamfulfill.mapper.ActivityMapper;
-import com.raven.dreamfulfill.mapper.DrawRecordMapper;
-import com.raven.dreamfulfill.mapper.SpecialDateMapper;
-import com.raven.dreamfulfill.mapper.UserMapper;
+import com.raven.dreamfulfill.mapper.*;
 import com.raven.dreamfulfill.service.IActivityService;
 import com.raven.dreamfulfill.service.IActivityStatService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.weekend.WeekendSqls;
 
@@ -60,6 +55,8 @@ public class ActivityServiceImpl implements IActivityService {
     private SpecialDateMapper specialDateMapper;
     @Autowired
     private DrawRecordMapper drawRecordMapper;
+    @Autowired
+    private GiftMapper giftMapper;
 
     @Override
     public PageResult<ActivityResp> pageQueryActivityList(PageQueryActivityListReq req) {
@@ -67,7 +64,7 @@ public class ActivityServiceImpl implements IActivityService {
 
         List<Activity> activityList = activityMapper.selectByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getVal()))
+                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode()))
                 .orderByDesc("id")
                 .build());
         PageInfo<Activity> pageInfo = new PageInfo<>(activityList);
@@ -81,7 +78,7 @@ public class ActivityServiceImpl implements IActivityService {
     public void addActivity(AddActivityReq req) {
         int themeExist = activityMapper.selectCountByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getVal())
+                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
                         .andEqualTo(Activity::getTheme, req.getTheme()))
                 .build());
         if (themeExist > 0) {
@@ -89,7 +86,7 @@ public class ActivityServiceImpl implements IActivityService {
         }
         int timeClashCount = activityMapper.selectCountByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getVal())
+                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
                         .andLessThanOrEqualTo(Activity::getStartTime, req.getEndTime())
                         .andGreaterThanOrEqualTo(Activity::getEndTime, req.getStartTime()))
                 .build());
@@ -108,7 +105,7 @@ public class ActivityServiceImpl implements IActivityService {
 
         int themeExist = activityMapper.selectCountByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getVal())
+                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
                         .andEqualTo(Activity::getTheme, req.getTheme())
                         .andNotEqualTo(Activity::getId, req.getId()))
                 .build());
@@ -117,7 +114,7 @@ public class ActivityServiceImpl implements IActivityService {
         }
         int timeClashCount = activityMapper.selectCountByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getVal())
+                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
                         .andNotEqualTo(Activity::getId, req.getId())
                         .andLessThanOrEqualTo(Activity::getStartTime, req.getEndTime())
                         .andGreaterThanOrEqualTo(Activity::getEndTime, req.getStartTime()))
@@ -127,7 +124,7 @@ public class ActivityServiceImpl implements IActivityService {
         }
 
         Activity activity = activityConverter.activityUpdateReqToActivityEntity(req);
-        activityMapper.updateByPrimaryKey(activity);
+        activityMapper.updateByPrimaryKeySelective(activity);
     }
 
     @Override
@@ -138,15 +135,15 @@ public class ActivityServiceImpl implements IActivityService {
             throw new CommonException("活动已删除~");
         }
 
-        activity.setIsDelete(IsYesEnum.YES.getVal());
-        activityMapper.updateByPrimaryKey(activity);
+        activity.setIsDelete(IsYesEnum.YES.getCode());
+        activityMapper.updateByPrimaryKeySelective(activity);
     }
 
     @Override
     public ActivityResp selectActivityInfo() {
         Activity activity = activityMapper.selectOneByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andEqualTo(Activity::getIsDelete, IsDelEnum.NO.getVal())
+                        .andEqualTo(Activity::getIsDelete, IsDelEnum.NO.getCode())
                         .andLessThanOrEqualTo(Activity::getStartTime, LocalDateTime.now())
                         .andGreaterThanOrEqualTo(Activity::getEndTime, LocalDateTime.now()))
                 .build());
@@ -159,6 +156,7 @@ public class ActivityServiceImpl implements IActivityService {
     }
 
     @Override
+    @Transactional
     public ActivityStatResp doLottery(DoLotteryReq req) {
 
         Activity activity = activityMapper.selectByPrimaryKey(req.getActivityId());
@@ -182,7 +180,7 @@ public class ActivityServiceImpl implements IActivityService {
         // 获取该用户本场活动的礼物信息。
         List<ActivityStatResp> currentActivityStatList = activityStatService.findCurrentActivityStatList(CurrentActivityStatReq.builder().activityId(req.getActivityId()).userId(req.getUserId()).build());
         if (CollectionUtils.isEmpty(currentActivityStatList)) {
-            throw new CommonException("您的专属抽奖还没有生成~");
+            throw new CommonException("没有您的专属抽奖活动哦，是不是想要的礼物太少了呢~");
         }
 
         // 抽奖
@@ -191,6 +189,12 @@ public class ActivityServiceImpl implements IActivityService {
         // 生成抽奖记录
         DrawRecord drawRecord = activityConverter.activityStatRespToDrawRecordEntity(resultGift, req.getUserId());
         drawRecordMapper.insertSelective(drawRecord);
+
+        // 修改礼物已购买
+        Gift gift = new Gift();
+        gift.setId(drawRecord.getGiftId());
+        gift.setIsBuy(true);
+        giftMapper.updateByPrimaryKeySelective(gift);
         return resultGift;
     }
 
@@ -214,7 +218,7 @@ public class ActivityServiceImpl implements IActivityService {
 
         List<SpecialDate> specialDateList = specialDateMapper.selectByExample(Example.builder(SpecialDate.class)
                 .where(WeekendSqls.<SpecialDate>custom()
-                        .andNotEqualTo(SpecialDate::getIsDelete, IsDelEnum.NO.getVal()))
+                        .andNotEqualTo(SpecialDate::getIsDelete, IsDelEnum.NO.getCode()))
                 .build());
         Map<Long, SpecialDate> specialDateMap = specialDateList.stream().collect(Collectors.toMap(SpecialDate::getId, specialDate -> specialDate));
 

@@ -6,6 +6,8 @@ import com.raven.dreamfulfill.domain.req.specialdate.PageQuerySpecialDateListReq
 import com.raven.dreamfulfill.domain.req.specialdate.UpdateSpecialDateReq;
 import com.raven.dreamfulfill.domain.resp.specialdate.SpecialDateResp;
 
+import java.time.LocalDateTime;
+
 /**
  * Description:
  * date: 2023/10/11 09:45
@@ -46,4 +48,11 @@ public interface ISpecialDateService {
      * @param year
      */
     void insertSpecialDateByYear(int year);
+
+    /**
+     *
+     * @param holidayTime
+     * @return
+     */
+     int getTimeClashCount(LocalDateTime holidayTime);
 }

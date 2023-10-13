@@ -19,11 +19,13 @@ import com.raven.dreamfulfill.mapper.UserMapper;
 import com.raven.dreamfulfill.service.ISpecialDateService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.weekend.WeekendSqls;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -53,7 +55,7 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
 
         List<SpecialDate> specialDateList = specialDateMapper.selectByExample(Example.builder(SpecialDate.class)
                 .where(WeekendSqls.<SpecialDate>custom()
-                        .andNotEqualTo(SpecialDate::getIsDelete, IsYesEnum.NO.getVal()))
+                        .andNotEqualTo(SpecialDate::getIsDelete, IsYesEnum.NO.getCode()))
                 .orderByDesc("id")
                 .build());
         PageInfo<SpecialDate> pageInfo = new PageInfo<>(specialDateList);
@@ -74,13 +76,7 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
             throw new CommonException("节日名称已存在~");
         }
 
-        int timeClashCount = specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
-                .where(WeekendSqls.<SpecialDate>custom()
-                        .andBetween(SpecialDate::getHolidayTime, req.getHolidayTime().with(LocalTime.MIN), req.getHolidayTime().with(LocalTime.MAX)))
-                .build());
-        if (timeClashCount > 0) {
-            throw new CommonException("这一天已经有节日啦~");
-        }
+        holidayTimeClashCheck(req.getHolidayTime());
 
         SpecialDate specialDate = specialDateConverter.specialDateAddReqToSpecialDateEntity(req);
 
@@ -98,16 +94,24 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
             throw new CommonException("节日名称已存在~");
         }
 
-        int timeClashCount = specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
-                .where(WeekendSqls.<SpecialDate>custom()
-                        .andBetween(SpecialDate::getHolidayTime, req.getHolidayTime().with(LocalTime.MIN), req.getHolidayTime().with(LocalTime.MAX)))
-                .build());
+        holidayTimeClashCheck(req.getHolidayTime());
+
+        SpecialDate specialDate = specialDateConverter.specialDateUpdateReqToSpecialDateEntity(req);
+        specialDateMapper.updateByPrimaryKeySelective(specialDate);
+    }
+
+    private void holidayTimeClashCheck(LocalDateTime holidayTime) {
+        int timeClashCount = getTimeClashCount(holidayTime);
         if (timeClashCount > 0) {
             throw new CommonException("这一天已经有节日啦~");
         }
+    }
 
-        SpecialDate specialDate = specialDateConverter.specialDateUpdateReqToSpecialDateEntity(req);
-        specialDateMapper.updateByPrimaryKey(specialDate);
+    public int getTimeClashCount(LocalDateTime holidayTime) {
+        return specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
+                .where(WeekendSqls.<SpecialDate>custom()
+                        .andBetween(SpecialDate::getHolidayTime, holidayTime.with(LocalTime.MIN), holidayTime.with(LocalTime.MAX)))
+                .build());
     }
 
     @Override
@@ -117,8 +121,8 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
             throw new CommonException("节日已删除~");
         }
 
-        specialDate.setIsDelete(IsYesEnum.YES.getVal());
-        specialDateMapper.updateByPrimaryKey(specialDate);
+        specialDate.setIsDelete(IsYesEnum.YES.getCode());
+        specialDateMapper.updateByPrimaryKeySelective(specialDate);
     }
 
     @Override
@@ -128,6 +132,7 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
 
         // 使用Stream分组并取最小日期
         List<HolidayDTO> holidayDTOList = new ArrayList<>(holidayList.stream()
+                .filter(dto -> !StringUtils.equalsAny(dto.getName(), "端午节", "清明节"))
                 .collect(Collectors.toMap(HolidayDTO::getName, Function.identity(), BinaryOperator.minBy(Comparator.comparing(HolidayDTO::getDate))))
                 .values());
 
@@ -136,13 +141,12 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
     }
 
     private List<SpecialDate> convertHolidayDTOListToSpecialDateList(List<HolidayDTO> holidayDTOList) {
-        return holidayDTOList.stream().map(holidayDTO -> specialDateConverter.convertHolidayDTOToSpecialDate(holidayDTO)).filter(specialDate -> {
-            int timeClashCount = specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
-                    .where(WeekendSqls.<SpecialDate>custom()
-                            .andBetween(SpecialDate::getHolidayTime, specialDate.getHolidayTime().with(LocalTime.MIN), specialDate.getHolidayTime().with(LocalTime.MAX)))
-                    .build());
-            return timeClashCount <= 0;
-        }).collect(Collectors.toList());
+        return holidayDTOList.stream()
+                .map(holidayDTO -> specialDateConverter.convertHolidayDTOToSpecialDate(holidayDTO))
+                .filter(specialDate -> {
+                    int timeClashCount = getTimeClashCount(specialDate.getHolidayTime());
+                    return timeClashCount <= 0;
+                }).collect(Collectors.toList());
     }
 
     private List<SpecialDateResp> convertSpecialDateListToSpecialDateRespList(List<SpecialDate> specialDateList) {

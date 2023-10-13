@@ -44,6 +44,12 @@ public class AddGiftReq extends AbstractBean {
     @NotNull
     private BigDecimal infatuationScore;
 
+    @ApiModelProperty(value = "实用性")
+    @DecimalMin("0")
+    @DecimalMax("100")
+    @NotNull
+    private BigDecimal practicalityValue;
+
     @ApiModelProperty(value = "添加原因")
     @NotBlank
     private String description;

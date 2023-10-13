@@ -50,7 +50,7 @@ public class GiftServiceImpl implements IGiftService {
 
         List<Gift> giftList = giftMapper.selectByExample(Example.builder(Gift.class)
                 .where(WeekendSqls.<Gift>custom()
-                        .andNotEqualTo(Gift::getIsDelete, IsYesEnum.NO.getVal()))
+                        .andNotEqualTo(Gift::getIsDelete, IsYesEnum.NO.getCode()))
                 .orderByDesc("id")
                 .build());
         PageInfo<Gift> pageInfo = new PageInfo<>(giftList);
@@ -88,7 +88,7 @@ public class GiftServiceImpl implements IGiftService {
         }
 
         Gift gift = giftConverter.giftUpdateReqToGiftEntity(req);
-        giftMapper.updateByPrimaryKey(gift);
+        giftMapper.updateByPrimaryKeySelective(gift);
     }
 
     @Override
@@ -98,8 +98,8 @@ public class GiftServiceImpl implements IGiftService {
             throw new CommonException("礼物已删除~");
         }
 
-        gift.setIsDelete(IsYesEnum.YES.getVal());
-        giftMapper.updateByPrimaryKey(gift);
+        gift.setIsDelete(IsYesEnum.YES.getCode());
+        giftMapper.updateByPrimaryKeySelective(gift);
     }
 
     private List<GiftResp> convertGiftListToGiftRespList(List<Gift> giftList) {
