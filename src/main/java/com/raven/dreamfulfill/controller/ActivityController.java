@@ -70,7 +70,7 @@ public class ActivityController {
 
     @ApiOperation("执行抽奖")
     @PostMapping("/doLottery")
-    public CommonResult<ActivityStatResp> doLottery(DoLotteryReq req) {
+    public CommonResult<ActivityStatResp> doLottery(@RequestBody @Validated DoLotteryReq req) {
         return CommonResult.success(activityService.doLottery(req));
     }
 }

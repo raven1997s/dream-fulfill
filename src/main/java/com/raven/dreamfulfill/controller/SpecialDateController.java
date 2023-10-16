@@ -47,7 +47,7 @@ public class SpecialDateController {
     }
 
     @ApiOperation("修改节日")
-    @PostMapping("/updateUser")
+    @PostMapping("/updateSpecialDate")
     public CommonResult<Void> updateSpecialDate(@RequestBody @Validated UpdateSpecialDateReq req) {
         specialDateService.updateSpecialDate(req);
         return CommonResult.success();

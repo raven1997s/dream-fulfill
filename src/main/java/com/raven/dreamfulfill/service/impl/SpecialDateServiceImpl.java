@@ -55,7 +55,7 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
 
         List<SpecialDate> specialDateList = specialDateMapper.selectByExample(Example.builder(SpecialDate.class)
                 .where(WeekendSqls.<SpecialDate>custom()
-                        .andNotEqualTo(SpecialDate::getIsDelete, IsYesEnum.NO.getCode()))
+                        .andEqualTo(SpecialDate::getIsDelete, IsYesEnum.NO.getCode()))
                 .orderByDesc("id")
                 .build());
         PageInfo<SpecialDate> pageInfo = new PageInfo<>(specialDateList);
@@ -76,7 +76,7 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
             throw new CommonException("节日名称已存在~");
         }
 
-        holidayTimeClashCheck(req.getHolidayTime());
+        this.holidayTimeClashCheck(req.getHolidayTime(), null);
 
         SpecialDate specialDate = specialDateConverter.specialDateAddReqToSpecialDateEntity(req);
 
@@ -94,24 +94,26 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
             throw new CommonException("节日名称已存在~");
         }
 
-        holidayTimeClashCheck(req.getHolidayTime());
+        this.holidayTimeClashCheck(req.getHolidayTime(), req.getId());
 
         SpecialDate specialDate = specialDateConverter.specialDateUpdateReqToSpecialDateEntity(req);
         specialDateMapper.updateByPrimaryKeySelective(specialDate);
     }
 
-    private void holidayTimeClashCheck(LocalDateTime holidayTime) {
-        int timeClashCount = getTimeClashCount(holidayTime);
+    private void holidayTimeClashCheck(LocalDateTime holidayTime, Long id) {
+        int timeClashCount = getTimeClashCount(holidayTime, id);
         if (timeClashCount > 0) {
             throw new CommonException("这一天已经有节日啦~");
         }
     }
 
-    public int getTimeClashCount(LocalDateTime holidayTime) {
-        return specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
-                .where(WeekendSqls.<SpecialDate>custom()
-                        .andBetween(SpecialDate::getHolidayTime, holidayTime.with(LocalTime.MIN), holidayTime.with(LocalTime.MAX)))
-                .build());
+    public int getTimeClashCount(LocalDateTime holidayTime, Long id) {
+        Example example = Example.builder(SpecialDate.class).build();
+        example.createCriteria()
+                .andBetween("holidayTime", holidayTime.with(LocalTime.MIN), holidayTime.with(LocalTime.MAX))
+                .andNotEqualTo("id", id);
+
+        return specialDateMapper.selectCountByExample(example);
     }
 
     @Override
@@ -144,7 +146,7 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
         return holidayDTOList.stream()
                 .map(holidayDTO -> specialDateConverter.convertHolidayDTOToSpecialDate(holidayDTO))
                 .filter(specialDate -> {
-                    int timeClashCount = getTimeClashCount(specialDate.getHolidayTime());
+                    int timeClashCount = getTimeClashCount(specialDate.getHolidayTime(), null);
                     return timeClashCount <= 0;
                 }).collect(Collectors.toList());
     }

@@ -1,6 +1,9 @@
 package com.raven.dreamfulfill.domain.enums;
 
+import com.raven.dreamfulfill.common.exception.CommonException;
 import lombok.Getter;
+
+import java.util.Objects;
 
 /**
  * Description:
@@ -22,14 +25,25 @@ public enum SpecialDateLevelEnum {
      */
     private double practicalityRate;
     /**
-     * 心动值占比
+     * 价格占比
      */
-    private double infatuationScoreRate;
+    private double priceScoreRate;
 
-    SpecialDateLevelEnum(String desc, Integer code, double practicalityRate, double infatuationScoreRate) {
+    SpecialDateLevelEnum(String desc, Integer code, double practicalityRate, double priceScoreRate) {
         this.desc = desc;
         this.code = code;
         this.practicalityRate = practicalityRate;
-        this.infatuationScoreRate = infatuationScoreRate;
+        this.priceScoreRate = priceScoreRate;
+    }
+
+
+    public static SpecialDateLevelEnum getEnumByValue(Integer code) {
+        SpecialDateLevelEnum[] values = SpecialDateLevelEnum.values();
+        for (SpecialDateLevelEnum enums : values) {
+            if (Objects.equals(enums.code, code)) {
+                return enums;
+            }
+        }
+        throw new CommonException(String.format("节日等级类型{%s}不存在", code));
     }
 }

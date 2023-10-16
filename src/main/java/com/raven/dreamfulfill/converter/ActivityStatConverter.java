@@ -1,6 +1,8 @@
 package com.raven.dreamfulfill.converter;
 
+import com.raven.dreamfulfill.domain.dto.activity.stat.InsertActivityStatDTO;
 import com.raven.dreamfulfill.domain.entity.ActivityStat;
+import com.raven.dreamfulfill.domain.entity.Gift;
 import com.raven.dreamfulfill.domain.req.activity.stat.AddActivityStatReq;
 import com.raven.dreamfulfill.domain.req.activity.stat.UpdateActivityStatReq;
 import com.raven.dreamfulfill.domain.resp.activity.stat.ActivityStatResp;
@@ -25,4 +27,9 @@ public interface ActivityStatConverter {
     ActivityStat activityStatUpdateReqToActivityStatEntity(UpdateActivityStatReq req);
 
     ActivityStatResp activityStatEntityToActivityStatResp(ActivityStat activityStat);
+
+    @Mapping(target = "createTime", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "giftId", expression = "java(gift.getId())")
+    @Mapping(target = "id", ignore = true)
+    ActivityStat giftToActivityStat(InsertActivityStatDTO dto, Long userId, Gift gift, Double winRate);
 }

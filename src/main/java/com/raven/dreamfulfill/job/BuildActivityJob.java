@@ -34,7 +34,7 @@ public class BuildActivityJob {
     /**
      * 每天凌晨自动生成活动，提前一周生成
      */
-    @Scheduled(cron = "*/2 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void buildActivityJob() {
         // 获取一周后的那天有没有节日，如果有节日则生成活动
         LocalDateTime holidayTime = LocalDateTime.now().plusDays(7);

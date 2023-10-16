@@ -64,7 +64,7 @@ public class ActivityServiceImpl implements IActivityService {
 
         List<Activity> activityList = activityMapper.selectByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode()))
+                        .andEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode()))
                 .orderByDesc("id")
                 .build());
         PageInfo<Activity> pageInfo = new PageInfo<>(activityList);
@@ -75,10 +75,11 @@ public class ActivityServiceImpl implements IActivityService {
     }
 
     @Override
+    @Transactional
     public void addActivity(AddActivityReq req) {
         int themeExist = activityMapper.selectCountByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
+                        .andEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
                         .andEqualTo(Activity::getTheme, req.getTheme()))
                 .build());
         if (themeExist > 0) {
@@ -86,7 +87,7 @@ public class ActivityServiceImpl implements IActivityService {
         }
         int timeClashCount = activityMapper.selectCountByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
+                        .andEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
                         .andLessThanOrEqualTo(Activity::getStartTime, req.getEndTime())
                         .andGreaterThanOrEqualTo(Activity::getEndTime, req.getStartTime()))
                 .build());
@@ -105,7 +106,7 @@ public class ActivityServiceImpl implements IActivityService {
 
         int themeExist = activityMapper.selectCountByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
+                        .andEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
                         .andEqualTo(Activity::getTheme, req.getTheme())
                         .andNotEqualTo(Activity::getId, req.getId()))
                 .build());
@@ -114,7 +115,7 @@ public class ActivityServiceImpl implements IActivityService {
         }
         int timeClashCount = activityMapper.selectCountByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
+                        .andEqualTo(Activity::getIsDelete, IsYesEnum.NO.getCode())
                         .andNotEqualTo(Activity::getId, req.getId())
                         .andLessThanOrEqualTo(Activity::getStartTime, req.getEndTime())
                         .andGreaterThanOrEqualTo(Activity::getEndTime, req.getStartTime()))
@@ -164,8 +165,12 @@ public class ActivityServiceImpl implements IActivityService {
             throw new CommonException("活动已删除~");
         }
         LocalDateTime now = LocalDateTime.now();
-        if (now.isAfter(activity.getEndTime()) || now.isBefore(activity.getStartTime())) {
-            throw new CommonException("不在活动时间范围内~");
+        if (now.isAfter(activity.getEndTime())) {
+            throw new CommonException("抽奖活动还没开始~");
+        }
+
+        if (now.isBefore(activity.getStartTime())) {
+            throw new CommonException("抽奖活动已经结束啦~");
         }
 
         int count = drawRecordMapper.selectCountByExample(Example.builder(DrawRecord.class)
@@ -200,15 +205,15 @@ public class ActivityServiceImpl implements IActivityService {
 
     private ActivityStatResp doLottery(List<ActivityStatResp> currentActivityStatList) {
         Map<Long, ActivityStatResp> giftMap = currentActivityStatList.stream().collect(Collectors.toMap(ActivityStatResp::getGiftId, entity -> entity));
-        Map<Long, Integer> giftWinRateMap = currentActivityStatList.stream().collect(Collectors.toMap(ActivityStatResp::getGiftId, ActivityStatResp::getWinRate));
+        Map<Long, Double> giftWinRateMap = currentActivityStatList.stream().collect(Collectors.toMap(ActivityStatResp::getGiftId, ActivityStatResp::getWinRate));
         // 抽奖
         Long selectGiftId = select(giftWinRateMap);
         return giftMap.get(selectGiftId);
     }
 
     // 获取随机角度,然后计算落在哪个物品上
-    private Long select(Map<Long, Integer> giftWinRateMap) {
-        LotteryDraw<Long, Integer> lotteryDraw = new LotteryDraw<>(giftWinRateMap);
+    private Long select(Map<Long, Double> giftWinRateMap) {
+        LotteryDraw<Long, Double> lotteryDraw = new LotteryDraw<>(giftWinRateMap);
         return lotteryDraw.draw();
     }
 
@@ -218,7 +223,7 @@ public class ActivityServiceImpl implements IActivityService {
 
         List<SpecialDate> specialDateList = specialDateMapper.selectByExample(Example.builder(SpecialDate.class)
                 .where(WeekendSqls.<SpecialDate>custom()
-                        .andNotEqualTo(SpecialDate::getIsDelete, IsDelEnum.NO.getCode()))
+                        .andEqualTo(SpecialDate::getIsDelete, IsDelEnum.NO.getCode()))
                 .build());
         Map<Long, SpecialDate> specialDateMap = specialDateList.stream().collect(Collectors.toMap(SpecialDate::getId, specialDate -> specialDate));
 

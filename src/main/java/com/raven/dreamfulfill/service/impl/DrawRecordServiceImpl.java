@@ -73,19 +73,19 @@ public class DrawRecordServiceImpl implements IDrawRecordService {
 
         List<Activity> activities = activityMapper.selectByExample(Example.builder(Activity.class)
                 .where(WeekendSqls.<Activity>custom()
-                        .andNotEqualTo(Activity::getIsDelete, IsDelEnum.NO.getCode()))
+                        .andEqualTo(Activity::getIsDelete, IsDelEnum.NO.getCode()))
                 .build());
         Map<Long, Activity> activityMap = activities.stream().collect(Collectors.toMap(Activity::getId, activity -> activity));
 
         List<Gift> giftList = giftMapper.selectByExample(Example.builder(Gift.class)
                 .where(WeekendSqls.<Gift>custom()
-                        .andNotEqualTo(Gift::getIsDelete, IsDelEnum.NO.getCode()))
+                        .andEqualTo(Gift::getIsDelete, IsDelEnum.NO.getCode()))
                 .build());
         Map<Long, Gift> giftMap = giftList.stream().collect(Collectors.toMap(Gift::getId, gift -> gift));
 
         List<SpecialDate> specialDateList = specialDateMapper.selectByExample(Example.builder(SpecialDate.class)
                 .where(WeekendSqls.<SpecialDate>custom()
-                        .andNotEqualTo(SpecialDate::getIsDelete, IsDelEnum.NO.getCode()))
+                        .andEqualTo(SpecialDate::getIsDelete, IsDelEnum.NO.getCode()))
                 .build());
         Map<Long, SpecialDate> specialDateMap = specialDateList.stream().collect(Collectors.toMap(SpecialDate::getId, specialDate -> specialDate));
 

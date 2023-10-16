@@ -50,7 +50,7 @@ public class GiftServiceImpl implements IGiftService {
 
         List<Gift> giftList = giftMapper.selectByExample(Example.builder(Gift.class)
                 .where(WeekendSqls.<Gift>custom()
-                        .andNotEqualTo(Gift::getIsDelete, IsYesEnum.NO.getCode()))
+                        .andEqualTo(Gift::getIsDelete, IsYesEnum.NO.getCode()))
                 .orderByDesc("id")
                 .build());
         PageInfo<Gift> pageInfo = new PageInfo<>(giftList);
@@ -108,7 +108,7 @@ public class GiftServiceImpl implements IGiftService {
 
         return giftList.stream().map(gift -> {
             GiftResp giftResp = giftConverter.giftEntityToGiftResp(gift);
-            giftResp.setGiftName(userMap.get(gift.getCreateId()).getName());
+            giftResp.setCreateUserName(userMap.get(gift.getCreateId()).getName());
             return giftResp;
         }).collect(Collectors.toList());
     }

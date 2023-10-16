@@ -100,7 +100,7 @@ public class UserServiceImpl implements IUserService {
     public List<UserResp> findAllHasLotteryPermissionUser() {
         List<User> userList = userMapper.selectByExample(Example.builder(User.class)
                 .where(WeekendSqls.<User>custom()
-                        .andNotEqualTo("hasLotteryPermission", IsYesEnum.YES.getCode()))
+                        .andEqualTo("hasLotteryPermission", IsYesEnum.YES.getCode()))
                 .build());
         if (CollectionUtils.isEmpty(userList)) {
             return Collections.emptyList();

@@ -21,7 +21,7 @@ public class LotteryDraw<K, V extends Number> {
 
     // 在构造方法中校验概率总和
     public LotteryDraw(Map<K, V> itemProbabilities) {
-
+        this.itemProbabilities = itemProbabilities;
         V total = getZeroValue();
 
         for (V prob : itemProbabilities.values()) {
@@ -31,9 +31,6 @@ public class LotteryDraw<K, V extends Number> {
         if (!total.equals(getTotalValue())) {
             throw new IllegalArgumentException("Probabilities must sum to " + getTotalValue());
         }
-
-        this.itemProbabilities = itemProbabilities;
-
         log.info("lottery detail : " + JSON.toJSONString(itemProbabilities));
     }
 
@@ -50,12 +47,20 @@ public class LotteryDraw<K, V extends Number> {
 
     // 获得一个初始值0
     protected V getZeroValue() {
-        return (V) (new Integer(0));
+        if (itemProbabilities.values().stream().anyMatch(v -> v instanceof Double)) {
+            return (V) (Double) 0.0;
+        } else {
+            return (V) (Integer) 0;
+        }
     }
 
     // 返回期望的总概率值,子类可以覆盖以自定义
     protected V getTotalValue() {
-        return (V) (new Integer(100));
+        if (itemProbabilities.values().stream().anyMatch(v -> v instanceof Double)) {
+            return (V) (Double) 1.0;
+        } else {
+            return (V) (Integer) 100;
+        }
     }
 
     // 随机数生成器类
@@ -67,6 +72,10 @@ public class LotteryDraw<K, V extends Number> {
             return random.nextInt(max - min) + min;
         }
 
+        public double nextDouble() {
+            return random.nextDouble();
+        }
+
     }
 
     // 使用随机数生成器,而不是 Math.random()
@@ -74,7 +83,7 @@ public class LotteryDraw<K, V extends Number> {
 
     public K draw() {
 
-        int random = randomGenerator.nextInt(0, 100);
+        double random = randomGenerator.nextDouble();
         log.info("random: {}", random);
         V cumProb = getZeroValue();
         for (Map.Entry<K, V> entry : itemProbabilities.entrySet()) {

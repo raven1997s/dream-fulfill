@@ -8,6 +8,7 @@ import com.raven.dreamfulfill.common.utils.ToStrUtils;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -141,7 +142,14 @@ public class CommonResult<T> implements Serializable {
     }
 
     public static CommonResult error(Throwable e) {
-        return new CommonResult(StatusEnum.SYS_ERROR.getStatus(), StatusEnum.SYS_ERROR.getDesc() + ":" + e.getMessage(), null);
+        if (e instanceof CommonException) {
+            CommonException se = (CommonException) e;
+            int code = se.getStatus();
+            String msg = StringUtils.isBlank(se.getMessage()) ? StatusEnum.ERROR.getDesc() : se.getMessage();
+            return new CommonResult(code, msg, null);
+        } else {
+            return new CommonResult(StatusEnum.SYS_ERROR.getStatus(), StatusEnum.SYS_ERROR.getDesc() + ":" + e.getMessage(), null);
+        }
     }
 
     public String toSimpleString() {

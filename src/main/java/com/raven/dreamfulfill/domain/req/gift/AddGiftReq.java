@@ -39,15 +39,15 @@ public class AddGiftReq extends AbstractBean {
     private BigDecimal price;
 
     @ApiModelProperty(value = "心动值")
-    @DecimalMin("60")
-    @DecimalMax("100")
-    @NotNull
+    @DecimalMin(value = "60", message = "心动值必须在60-100之间")
+    @DecimalMax(value = "100", message = "心动值必须在60-100之间")
+    @NotNull(message = "心动值必须在60-100之间")
     private BigDecimal infatuationScore;
 
     @ApiModelProperty(value = "实用性")
-    @DecimalMin("0")
-    @DecimalMax("100")
-    @NotNull
+    @DecimalMin(value = "0", message = "实用性必须在0-100之间")
+    @DecimalMax(value = "100", message = "实用性必须在0-100之间")
+    @NotNull(message = "实用性必须在0-100之间")
     private BigDecimal practicalityValue;
 
     @ApiModelProperty(value = "添加原因")
