@@ -30,28 +30,28 @@ public class UpdateGiftReq extends IdReq {
      * @see com.raven.dreamfulfill.domain.enums.GiftTypeEnum
      */
     @ApiModelProperty(value = "礼物类型，虚拟物品、化妆品、出行等等 ")
-    @NotNull
+    @NotNull(message = "礼物类型不能为空")
     private Integer type;
 
     @ApiModelProperty(value = "礼物价格")
     @DecimalMin("0")
-    @NotNull
+    @NotNull(message = "礼物价格不能为空")
     private BigDecimal price;
 
     @ApiModelProperty(value = "心动值")
     @DecimalMin("60")
     @DecimalMax("100")
-    @NotNull
+    @NotNull(message = "心动值不能为空")
     private BigDecimal infatuationScore;
 
     @ApiModelProperty(value = "实用性")
     @DecimalMin("0")
     @DecimalMax("100")
-    @NotNull
+    @NotNull(message = "实用性不能为空")
     private BigDecimal practicalityValue;
 
     @ApiModelProperty(value = "添加原因")
-    @NotBlank
+    @NotBlank(message = "添加原因不能为空")
     private String description;
 
 }

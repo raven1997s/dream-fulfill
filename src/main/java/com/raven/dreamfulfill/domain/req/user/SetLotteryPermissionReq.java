@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 public class SetLotteryPermissionReq extends IdReq {
 
     @ApiModelProperty(value = "是否有抽奖权限 ")
-    @NotNull
+    @NotNull(message = "抽奖权限不能为空")
     private Boolean hasLotteryPermission;
 
 }

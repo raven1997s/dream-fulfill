@@ -25,19 +25,19 @@ import java.time.LocalDateTime;
 @Data
 public class UpdateSpecialDateReq extends IdReq {
 
-    @NotBlank
+    @NotBlank(message = "节日名称不能为空")
     @ApiModelProperty(value = "节日名称")
     private String holidayName;
 
-    @NotNull
+    @NotNull(message = "节日重要程度不能为空")
     @ApiModelProperty(value = "节日重要程度")
     private Integer level;
 
-    @NotNull
+    @NotNull(message = "节日类型不能为空")
     @ApiModelProperty(value = "节日类型，传统节日、纪念日等等")
     private Integer holidayType;
 
-    @NotNull
+    @NotNull(message = "节日所在日期不能为空")
     @ApiModelProperty(value = "节日所在日期")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)

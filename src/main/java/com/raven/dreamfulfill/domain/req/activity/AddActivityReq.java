@@ -39,25 +39,25 @@ public class AddActivityReq extends AbstractBean {
     @ApiModelProperty(value = "活动规则")
     private String rule;
 
-    @NotNull
+    @NotNull(message = "活动开始时间不能为空")
     @ApiModelProperty(value = "活动开始时间")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime startTime;
 
-    @NotNull
+    @NotNull(message = "活动结束时间不能为空")
     @ApiModelProperty(value = "活动结束时间")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime endTime;
 
-    @NotNull
+    @NotNull(message = "节日id不能为空")
     @ApiModelProperty(value = "节日id")
     private Long holidayId;
 
-    @NotNull
+    @NotNull(message = "创建人id不能为空")
     @ApiModelProperty(value = "创建人id")
     private Integer createUser;
 

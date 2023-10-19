@@ -19,11 +19,11 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class CurrentActivityStatReq extends AbstractBean {
 
-    @NotNull
+    @NotNull(message = "活动id不能为空")
     @ApiModelProperty(value = "活动id")
     private Long activityId;
 
-    @NotNull
+    @NotNull(message = "用户id不能为空")
     @ApiModelProperty(value = "用户id")
     private Long userId;
 }

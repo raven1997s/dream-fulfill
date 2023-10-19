@@ -30,12 +30,12 @@ public class AddGiftReq extends AbstractBean {
      * @see com.raven.dreamfulfill.domain.enums.GiftTypeEnum
      */
     @ApiModelProperty(value = "礼物类型，虚拟物品、化妆品、出行等等 ")
-    @NotNull
+    @NotNull(message = "礼物类型不能为空")
     private Integer type;
 
     @ApiModelProperty(value = "礼物价格")
     @DecimalMin("0")
-    @NotNull
+    @NotNull(message = "礼物价格不能为空")
     private BigDecimal price;
 
     @ApiModelProperty(value = "心动值")
@@ -55,7 +55,7 @@ public class AddGiftReq extends AbstractBean {
     private String description;
 
     @ApiModelProperty(value = "创建人id")
-    @NotNull
+    @NotNull(message = "不能为空")
     private Long createId;
 
 }

@@ -18,10 +18,10 @@ import javax.validation.constraints.NotNull;
 public class DoLotteryReq  extends AbstractBean {
 
     @ApiModelProperty(value = "活动id")
-    @NotNull
+    @NotNull(message = "活动id不能为空")
     private Long activityId;
 
     @ApiModelProperty(value = "抽奖人id")
-    @NotNull
+    @NotNull(message = "抽奖人id不能为空")
     private Long userId;
 }

@@ -32,22 +32,22 @@ public class AddSpecialDateReq extends AbstractBean {
     /**
      * @see com.raven.dreamfulfill.domain.enums.SpecialDateLevelEnum
      */
-    @NotNull
+    @NotNull(message = "不能为空")
     @ApiModelProperty(value = "节日重要程度")
     private Integer level;
 
     /**
      * @see com.raven.dreamfulfill.domain.enums.SpecialDateTypeEnum
      */
-    @NotNull
+    @NotNull(message = "节日类型不能为空")
     @ApiModelProperty(value = "节日类型，传统节日、纪念日等等")
     private Integer holidayType;
 
-    @NotNull
+    @NotNull(message = "节日添加人不能为空")
     @ApiModelProperty(value = "节日添加人")
     private Long createId;
 
-    @NotNull
+    @NotNull(message = "节日所在日期不能为空")
     @ApiModelProperty(value = "节日所在日期")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
