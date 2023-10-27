@@ -67,6 +67,7 @@ logging.path_IS_UNDEFINED
 build/
 !gradle/wrapper/gradle-wrapper.jar
 /logging.file.path_IS_UNDEFINED
+.DS_Store
 
 # vscode
 .vscode/
