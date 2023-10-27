@@ -7,8 +7,10 @@ import com.raven.dreamfulfill.common.exception.CommonException;
 import com.raven.dreamfulfill.common.utils.HolidayUtils;
 import com.raven.dreamfulfill.converter.SpecialDateConverter;
 import com.raven.dreamfulfill.domain.dto.HolidayDTO;
+import com.raven.dreamfulfill.domain.entity.Gift;
 import com.raven.dreamfulfill.domain.entity.SpecialDate;
 import com.raven.dreamfulfill.domain.entity.User;
+import com.raven.dreamfulfill.domain.enums.IsDelEnum;
 import com.raven.dreamfulfill.domain.enums.IsYesEnum;
 import com.raven.dreamfulfill.domain.req.specialdate.AddSpecialDateReq;
 import com.raven.dreamfulfill.domain.req.specialdate.PageQuerySpecialDateListReq;
@@ -70,7 +72,9 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
     public void addSpecialDate(AddSpecialDateReq req) {
         int count = specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
                 .where(WeekendSqls.<SpecialDate>custom()
-                        .andEqualTo(SpecialDate::getHolidayName, req.getHolidayName()))
+                        .andEqualTo(SpecialDate::getHolidayName, req.getHolidayName())
+                        .andNotEqualTo(SpecialDate::getIsDelete, IsDelEnum.YES.getCode())
+                )
                 .build());
         if (count > 0) {
             throw new CommonException("节日名称已存在~");
@@ -88,7 +92,8 @@ public class SpecialDateServiceImpl implements ISpecialDateService {
         int count = specialDateMapper.selectCountByExample(Example.builder(SpecialDate.class)
                 .where(WeekendSqls.<SpecialDate>custom()
                         .andEqualTo(SpecialDate::getHolidayName, req.getHolidayName())
-                        .andNotEqualTo(SpecialDate::getId, req.getId()))
+                        .andNotEqualTo(SpecialDate::getId, req.getId())
+                        .andEqualTo(SpecialDate::getIsDelete, IsYesEnum.NO.getCode()))
                 .build());
         if (count > 0) {
             throw new CommonException("节日名称已存在~");

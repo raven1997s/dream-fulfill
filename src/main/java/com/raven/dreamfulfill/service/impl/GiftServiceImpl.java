@@ -4,8 +4,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.raven.dreamfulfill.common.base.PageResult;
 import com.raven.dreamfulfill.converter.GiftConverter;
+import com.raven.dreamfulfill.domain.entity.Activity;
 import com.raven.dreamfulfill.domain.entity.Gift;
 import com.raven.dreamfulfill.domain.entity.User;
+import com.raven.dreamfulfill.domain.enums.IsDelEnum;
 import com.raven.dreamfulfill.domain.enums.IsYesEnum;
 import com.raven.dreamfulfill.domain.req.gift.AddGiftReq;
 import com.raven.dreamfulfill.domain.req.gift.PageQueryGiftListReq;
@@ -65,7 +67,10 @@ public class GiftServiceImpl implements IGiftService {
 
         int count = giftMapper.selectCountByExample(Example.builder(Gift.class)
                 .where(WeekendSqls.<Gift>custom()
-                        .andEqualTo(Gift::getGiftName, req.getGiftName()))
+                        .andEqualTo(Gift::getGiftName, req.getGiftName())
+                        .andNotEqualTo(Gift::getIsDelete, IsDelEnum.YES.getCode())
+                )
+
                 .build());
         if (count > 0) {
             throw new CommonException("礼物名称已存在~");
@@ -81,6 +86,7 @@ public class GiftServiceImpl implements IGiftService {
         int count = giftMapper.selectCountByExample(Example.builder(Gift.class)
                 .where(WeekendSqls.<Gift>custom()
                         .andEqualTo(Gift::getGiftName, req.getGiftName())
+                        .andEqualTo(Gift::getIsDelete, IsYesEnum.NO.getCode())
                         .andNotEqualTo(Gift::getId, req.getId()))
                 .build());
         if (count > 0) {
@@ -108,7 +114,7 @@ public class GiftServiceImpl implements IGiftService {
 
         return giftList.stream().map(gift -> {
             GiftResp giftResp = giftConverter.giftEntityToGiftResp(gift);
-            giftResp.setCreateUserName(userMap.get(gift.getCreateId()).getName());
+            giftResp.setCreateUserName(gift.getCreateId() == 0 ? "系统" :  userMap.get(gift.getCreateId()).getName());
             return giftResp;
         }).collect(Collectors.toList());
     }
