@@ -48,6 +48,9 @@ public class ActivityResp extends AbstractBean {
     @ApiModelProperty(value = "节日名称")
     private String holidayName;
 
+    @ApiModelProperty(value = "节日Id")
+    private Long holidayId;
+
     @ApiModelProperty(value = "用户名称")
     private String createUserName;
 

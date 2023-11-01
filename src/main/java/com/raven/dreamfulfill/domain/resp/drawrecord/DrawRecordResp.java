@@ -10,6 +10,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
@@ -22,6 +26,7 @@ import java.time.LocalDateTime;
 @Data
 public class DrawRecordResp extends AbstractBean {
 
+    private Long id;
 
     @ApiModelProperty(value = "活动主题")
     private String activityTheme;

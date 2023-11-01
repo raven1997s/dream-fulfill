@@ -153,7 +153,7 @@ public class ActivityServiceImpl implements IActivityService {
             throw new CommonException("现在没有进行中的活动哦~");
         }
 
-        return activityConverter.activityEntityToActivityResp(activity);
+        return convertActivityListToActivityRespList(Collections.singletonList(activity)).get(0);
     }
 
     @Override
@@ -230,7 +230,9 @@ public class ActivityServiceImpl implements IActivityService {
         return activityList.stream().map(activity -> {
             ActivityResp activityResp = activityConverter.activityEntityToActivityResp(activity);
             activityResp.setCreateUserName(userMap.get(Long.valueOf(activity.getCreateUser())).getName());
-            activityResp.setHolidayName(specialDateMap.get(activity.getHolidayId()).getHolidayName());
+            SpecialDate specialDate = specialDateMap.get(activity.getHolidayId());
+            activityResp.setHolidayName(specialDate.getHolidayName());
+            activityResp.setHolidayId(specialDate.getId());
             return activityResp;
         }).collect(Collectors.toList());
     }

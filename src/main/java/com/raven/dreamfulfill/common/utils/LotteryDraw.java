@@ -90,7 +90,7 @@ public class LotteryDraw<K, V extends Number> {
 
             cumProb = sum(cumProb, entry.getValue());
             log.info("key : " + entry.getKey() + " ==>  cumProb : " + cumProb);
-            if (random < cumProb.intValue()) {
+            if (random < cumProb.doubleValue()) {
                 log.info("result : " + entry.getKey());
                 return entry.getKey();
             }

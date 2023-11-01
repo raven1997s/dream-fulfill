@@ -34,7 +34,7 @@ spring:
       socket-timeout: 30000
 
 ds:
-  url: rm-cn-zsk3bkvlr000wh2o.rwlb.rds.aliyuncs.com
+  url: rm-bp1wgcu8392y53xpm1o.mysql.rds.aliyuncs.com
   name: raven
   pwd: hM5ePLsVESJxX3@
 

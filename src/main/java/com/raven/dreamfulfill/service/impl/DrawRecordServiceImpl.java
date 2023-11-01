@@ -89,12 +89,12 @@ public class DrawRecordServiceImpl implements IDrawRecordService {
                 .build());
         Map<Long, SpecialDate> specialDateMap = specialDateList.stream().collect(Collectors.toMap(SpecialDate::getId, specialDate -> specialDate));
 
-        return drawRecordList.stream().map(specialDate -> {
-            DrawRecordResp drawRecordResp = drawRecordConverter.drawRecordEntityToDrawRecordResp(specialDate);
-            drawRecordResp.setUserName(userMap.get(specialDate.getUserId()).getName());
-            drawRecordResp.setActivityTheme(activityMap.get(specialDate.getActivityId()).getTheme());
-            drawRecordResp.setGiftName(giftMap.get(specialDate.getGiftId()).getGiftName());
-            drawRecordResp.setHolidayName(specialDateMap.get(specialDate.getHolidayId()).getHolidayName());
+        return drawRecordList.stream().map(drawRecord -> {
+            DrawRecordResp drawRecordResp = drawRecordConverter.drawRecordEntityToDrawRecordResp(drawRecord);
+            drawRecordResp.setUserName(userMap.get(drawRecord.getUserId()).getName());
+            drawRecordResp.setActivityTheme(activityMap.get(drawRecord.getActivityId()).getTheme());
+            drawRecordResp.setGiftName(giftMap.get(drawRecord.getGiftId()).getGiftName());
+            drawRecordResp.setHolidayName(specialDateMap.get(drawRecord.getHolidayId()).getHolidayName());
             return drawRecordResp;
         }).collect(Collectors.toList());
     }

@@ -23,6 +23,7 @@ import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.weekend.WeekendSqls;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -88,7 +89,7 @@ public class ActivityStatServiceImpl implements IActivityStatService {
                 .orderByDesc("infatuationScore")
                 .build());
 
-        if (CollectionUtils.isEmpty(allGiftList)){
+        if (CollectionUtils.isEmpty(allGiftList)) {
             throw new CommonException("还没有心愿呢~");
         }
 
@@ -113,9 +114,9 @@ public class ActivityStatServiceImpl implements IActivityStatService {
         Map<Long, Long> finalGiftJoinActivityCountMap = giftJoinActivityCountMap;
         List<ActivityStat> activityStatList = allGiftList.stream().collect(Collectors.groupingBy(Gift::getCreateId)).entrySet().stream()
                 // 有效礼物太少，不生成抽奖活动信息
-                .filter(entry -> entry.getValue().size() > 3)
+                .filter(entry -> entry.getValue().size() > 5)
                 // 筛选出心动值排名靠前的五个礼物
-                .peek(entry -> entry.setValue(entry.getValue().subList(0, 3)))
+                .peek(entry -> entry.setValue(entry.getValue().subList(0, 5)))
                 // 计算每个用户礼物的中奖概率
                 .flatMap(entry -> {
                     List<Gift> userGiftList = entry.getValue();
@@ -124,9 +125,10 @@ public class ActivityStatServiceImpl implements IActivityStatService {
                     return userGiftList.stream().map(gift -> activityStatConverter.giftToActivityStat(dto, entry.getKey(), gift, giftRateMap.get(gift.getId())));
                 }).collect(Collectors.toList());
 
-        if (CollectionUtils.isNotEmpty(activityStatList)) {
-            activityStatMapper.insertList(activityStatList);
+        if (CollectionUtils.isEmpty(activityStatList)) {
+            throw new CommonException("没有用户满足抽奖活动要求哦，让大家多去添加一些想要的礼物吧~");
         }
+        activityStatMapper.insertList(activityStatList);
     }
 
     /**
@@ -148,10 +150,11 @@ public class ActivityStatServiceImpl implements IActivityStatService {
     private double calculateGiftScore(SpecialDateLevelEnum level, Gift gift, Map<Long, Long> giftJoinActivityCountMap) {
         // 实用性得分
         double utilityScore = gift.getPracticalityValue().multiply(BigDecimal.valueOf(level.getPracticalityRate())).doubleValue();
+
         // 价格得分
-        double priceScore = gift.getPrice().multiply(BigDecimal.valueOf(level.getPriceScoreRate())).doubleValue();
+        double priceScore = (new BigDecimal("10000").divide(gift.getPrice(), 4,RoundingMode.HALF_DOWN)).multiply(BigDecimal.valueOf(level.getPriceScoreRate())).doubleValue();
         // 历史参加活动次数得分 = 历次参加活动次数 * 5
-        double giftJoinActivityCountScore = giftJoinActivityCountMap.getOrDefault(gift.getId(),0L) * 5;
+        double giftJoinActivityCountScore = giftJoinActivityCountMap.getOrDefault(gift.getId(), 0L) * 500;
         // 心动值得分
         double infatuationScore = gift.getInfatuationScore().multiply(BigDecimal.valueOf(30)).doubleValue();
         // 计算礼物总得分
