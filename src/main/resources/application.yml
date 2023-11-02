@@ -34,9 +34,9 @@ spring:
       socket-timeout: 30000
 
 ds:
-  url: rm-bp1wgcu8392y53xpm1o.mysql.rds.aliyuncs.com
-  name: raven
-  pwd: hM5ePLsVESJxX3@
+  url: longmarch.work
+  name: dream_fulfill
+  pwd: 2xicyFJziza2Ghns
 
 mybatis:
   configuration:
