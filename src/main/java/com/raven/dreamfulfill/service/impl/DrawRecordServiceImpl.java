@@ -68,26 +68,13 @@ public class DrawRecordServiceImpl implements IDrawRecordService {
 
 
     private List<DrawRecordResp> convertDrawRecordListToDrawRecordRespList(List<DrawRecord> drawRecordList) {
-        List<User> userList = userMapper.selectAll();
-        Map<Long, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, user -> user));
+        Map<Long, User> userMap = userMapper.selectAll().stream().collect(Collectors.toMap(User::getId, user -> user));
 
-        List<Activity> activities = activityMapper.selectByExample(Example.builder(Activity.class)
-                .where(WeekendSqls.<Activity>custom()
-                        .andEqualTo(Activity::getIsDelete, IsDelEnum.NO.getCode()))
-                .build());
-        Map<Long, Activity> activityMap = activities.stream().collect(Collectors.toMap(Activity::getId, activity -> activity));
+        Map<Long, Activity> activityMap = activityMapper.selectAll().stream().collect(Collectors.toMap(Activity::getId, activity -> activity));
 
-        List<Gift> giftList = giftMapper.selectByExample(Example.builder(Gift.class)
-                .where(WeekendSqls.<Gift>custom()
-                        .andEqualTo(Gift::getIsDelete, IsDelEnum.NO.getCode()))
-                .build());
-        Map<Long, Gift> giftMap = giftList.stream().collect(Collectors.toMap(Gift::getId, gift -> gift));
+        Map<Long, Gift> giftMap = giftMapper.selectAll().stream().collect(Collectors.toMap(Gift::getId, gift -> gift));
 
-        List<SpecialDate> specialDateList = specialDateMapper.selectByExample(Example.builder(SpecialDate.class)
-                .where(WeekendSqls.<SpecialDate>custom()
-                        .andEqualTo(SpecialDate::getIsDelete, IsDelEnum.NO.getCode()))
-                .build());
-        Map<Long, SpecialDate> specialDateMap = specialDateList.stream().collect(Collectors.toMap(SpecialDate::getId, specialDate -> specialDate));
+        Map<Long, SpecialDate> specialDateMap = specialDateMapper.selectAll().stream().collect(Collectors.toMap(SpecialDate::getId, specialDate -> specialDate));
 
         return drawRecordList.stream().map(drawRecord -> {
             DrawRecordResp drawRecordResp = drawRecordConverter.drawRecordEntityToDrawRecordResp(drawRecord);
