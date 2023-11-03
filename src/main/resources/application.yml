@@ -17,7 +17,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   datasource:
-    url: jdbc:mysql://${ds.url}:3306/dream_fulfill?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    url: jdbc:mysql://${ds.url}:3306/dream_fulfill?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=Asia/Shanghai&allowMultiQueries=true&useSSL=false
     username: ${ds.name}
     password: ${ds.pwd}
     driver-class-name: com.mysql.cj.jdbc.Driver
