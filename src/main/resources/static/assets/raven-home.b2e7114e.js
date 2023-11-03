@@ -1,1 +1,0 @@
-import{d as e,r as t,o,c as s,a as n}from"./index.ed1f32ce.js";const c=""+new URL("home.36785f7a.jpg",import.meta.url).href,r={class:"image-container"},_=["src"],m=e({name:"raven-home"}),u=e({...m,setup(l){const a=t(c);return(i,d)=>(o(),s("div",r,[n("img",{src:a.value,alt:"Home Screenshot",class:"styled-image"},null,8,_)]))}});export{u as default};
